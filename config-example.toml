@@ -1,0 +1,7 @@
+listen-address = "0.0.0.0:53238"
+data-dir = "./data"
+
+[blueiris]
+instance = "http://127.0.0.1:81"
+username = "abcdef"
+password = "123456"
