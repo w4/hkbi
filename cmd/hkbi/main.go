@@ -136,8 +136,16 @@ func run(config Config) {
 		startListeningForStreams(camera.Id, cam.StreamManagement1, globalState, &config, bi.BaseUrl)
 		startListeningForStreams(camera.Id, cam.StreamManagement2, globalState, &config, bi.BaseUrl)
 
-		// create the HomeKit motion sensor accessory
+		// create the HomeKit motion sensor service
 		motionSensor := service.NewMotionSensor()
+		motionSensorActive := characteristic.NewActive()
+		motionSensor.AddC(motionSensorActive.C)
+
+		// create camera recording management service
+		recordingManagement := service.NewCameraRecordingManagement()
+		cam.AddS(recordingManagement.S)
+
+		// add motion sensor service to camera - TODO: needs to add to DataStreamManagement too
 		cam.AddS(motionSensor.S)
 
 		// add the cameras to our output array/map for adding to the server and dispatching
