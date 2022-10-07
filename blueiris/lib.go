@@ -132,6 +132,7 @@ func (b *Blueiris) ListCameras() ([]Camera, error) {
 	return response.Data, nil
 }
 
+//lint:ignore U1000 usage not yet implemented
 func (b *Blueiris) triggerCamera(camera string) error {
 	b.mutex.RLock()
 	defer b.mutex.RUnlock()
