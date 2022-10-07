@@ -15,6 +15,7 @@ import (
 	"github.com/brutella/hap/service"
 	"github.com/brutella/hap/tlv8"
 	"github.com/w4/hkbi/blueiris"
+	service2 "github.com/w4/hkbi/service"
 	"io"
 	"math/rand"
 	"net"
@@ -132,9 +133,12 @@ func run(config Config) {
 			hasDiscoveredNewCameras = true
 		}
 
-		// setup stream request handling on management channels 1 & 2
+		// setup stream request handling on channel 1
 		startListeningForStreams(camera.Id, cam.StreamManagement1, globalState, &config, bi.BaseUrl)
-		startListeningForStreams(camera.Id, cam.StreamManagement2, globalState, &config, bi.BaseUrl)
+
+		// create the camera operating mode service
+		cameraOperatingMode := service2.NewCameraOperatingMode()
+		cam.AddS(cameraOperatingMode.S)
 
 		// create the HomeKit motion sensor service
 		motionSensor := service.NewMotionSensor()
@@ -316,6 +320,10 @@ func run(config Config) {
 
 // sets up a camera accessory for streaming
 func startListeningForStreams(cameraName string, mgmt *service.CameraRTPStreamManagement, globalState *GlobalState, config *Config, blueirisBase *url.URL) {
+	// add active characteristic to rtpstream
+	active := characteristic.NewActive()
+	mgmt.AddC(active.C)
+
 	// set up some basic parameters for HomeKit to know that the camera is available
 	setTlv8Payload(mgmt.StreamingStatus.Bytes, rtp.StreamingStatus{Status: rtp.StreamingStatusAvailable})
 	setTlv8Payload(mgmt.SupportedRTPConfiguration.Bytes, rtp.NewConfiguration(rtp.CryptoSuite_AES_CM_128_HMAC_SHA1_80))
