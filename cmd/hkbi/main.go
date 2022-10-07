@@ -114,7 +114,7 @@ func run(config Config) {
 			Manufacturer: "HKBI",
 		})
 
-		if id := knownCameras[camera.Name]; id != 0 {
+		if id, exists := knownCameras[camera.Name]; exists {
 			log.Debug.Printf("reusing previously assigned id %d for camera %s", id, camera.Name)
 			cam.Id = uint64(id)
 		} else {
