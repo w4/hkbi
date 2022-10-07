@@ -9,6 +9,8 @@ RUN go build -o hkbi cmd/hkbi/main.go
 
 FROM debian:bullseye
 LABEL org.opencontainers.image.source="https://github.com/w4/hkbi"
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get -y install ffmpeg && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /build/hkbi /app/hkbi
 CMD ["/app/hkbi", "/data/config.toml"]
